@@ -5,9 +5,9 @@ import Constants from 'expo-constants';
 import { Card, ListItem, Image, Button, Icon } from 'react-native-elements'
 import { LinearGradient } from 'expo-linear-gradient';
 import { Appearance, AppearanceProvider, useColorScheme } from 'react-native-appearance';
-import './hors.png'
-import ExpoStatusBar from 'expo-status-bar/build/ExpoStatusBar';
+import Step from './components/Step.js';
 import { ScrollView } from 'react-native';
+import styles from './styles.js'
 
 class Recipe {
   constructor(name, description=null, ingredient=null, image=null) {
@@ -90,44 +90,11 @@ export default function App(props) {
       >
         {recipe.steps.map((step, index) => {
           return (
-            <Card containerStyle={styles.step}>
-              <Card.Title>{step.description}</Card.Title>
-              {step.ingredient ? step.ingredient.map((ingredient, index) => {
-                return (
-                  <Text>{ingredient.name+'  '+String(ingredient.amount) + ingredient.unit}</Text>
-                )
-              }) : null}
-            </Card>
+            <Step style={styles.step} key={index} step={step}>
+            </Step>
           )
         })}
       </LinearGradient>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#6f4e37',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'flex-start'
-  },
-  step: {
-    alignSelf: 'stretch',
-    marginHorizontal: 20,
-    marginBottom: 20,
-    borderRadius: 30,
-    borderWidth: .2,
-    borderColor: '#aaa',
-    shadowColor: 'black',
-    shadowOffset: {width: 1, height: 3},
-    shadowRadius: 5,
-    shadowOpacity: .5
-  },
-  background: {
-    width:'100%',
-    height: '100%',
-    paddingTop: Constants.statusBarHeight,
-    margin: 0,
-  }
-});
