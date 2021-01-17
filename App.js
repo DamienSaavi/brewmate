@@ -43,6 +43,15 @@ recipe.addStep([
   {
     ingredient:
     [
+      { name: 'Coffee', amount: 17, unit: 'g' },
+      { name: 'Water', amount: 180, unit: 'g' }
+    ],
+    description: 'Basic Aeropress coffee recipe using the inverted method.',
+    timer: null
+  },
+  {
+    ingredient:
+    [
       { name: 'Coffee', amount: 17, unit: 'g' }
     ],
     description: 'Grind coffee to medium-fine and add to container.',
@@ -52,12 +61,7 @@ recipe.addStep([
     ingredient: [
       { name: 'Water', amount: 90, unit: 'g' }
     ],
-    description: 'Add water just off the boil and stir once.',
-    timer: null
-  },
-  {
-    ingredient: null,
-    description: 'Let the coffee bloom.',
+    description: 'Add water just off the boil and stir once and let bloom.',
     timer: {name:'Bloom', time:{minute:0, second:15}, synced:true}
   },
   {
@@ -84,17 +88,19 @@ export default function App(props) {
   return (
     <ScrollView contentContainerStyle={styles.container} indicatorStyle='black'>
       <StatusBar style='dark' />
-      <LinearGradient
-        colors={['#fff', '#fff']}
-        style={styles.background}
-      >
         {recipe.steps.map((step, index) => {
           return (
-            <Step style={styles.step} key={index} step={step}>
+            <Step 
+              style={{
+                container:styles.step,
+                description:styles.description,
+                ingredients:styles.ingredients,
+                descing: styles.descing,
+                timer: styles.timer}} 
+                key={index} step={step}>
             </Step>
           )
         })}
-      </LinearGradient>
     </ScrollView>
   );
 }
