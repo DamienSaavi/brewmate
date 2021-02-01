@@ -6,11 +6,12 @@ import { Card, ListItem, Image, Button, Icon } from 'react-native-elements'
 import { LinearGradient } from 'expo-linear-gradient';
 import { Appearance, AppearanceProvider, useColorScheme } from 'react-native-appearance';
 import Step from './components/Step.js';
+import Register from './components/Register.js';
 import { ScrollView } from 'react-native';
 import styles from './styles.js'
 
 class Recipe {
-  constructor(name, description=null, ingredient=null, image=null) {
+  constructor(name, description = null, ingredient = null, image = null) {
     this.name = name                  // string
     this.description = description    // string
     this.ingredient = ingredient      // [{name, amount, unit}, ...]
@@ -18,7 +19,7 @@ class Recipe {
     this.steps = []
   }
 
-  addStep(step, index=-1) {
+  addStep(step, index = -1) {
     this.steps.push(...step)
   }
 }
@@ -42,18 +43,18 @@ const recipe = new Recipe(name, description, ingredient)
 recipe.addStep([
   {
     ingredient:
-    [
-      { name: 'Coffee', amount: 17, unit: 'g' },
-      { name: 'Water', amount: 180, unit: 'g' }
-    ],
+      [
+        { name: 'Coffee', amount: 17, unit: 'g' },
+        { name: 'Water', amount: 180, unit: 'g' }
+      ],
     description: 'Basic Aeropress coffee recipe using the inverted method.',
     timer: null
   },
   {
     ingredient:
-    [
-      { name: 'Coffee', amount: 17, unit: 'g' }
-    ],
+      [
+        { name: 'Coffee', amount: 17, unit: 'g' }
+      ],
     description: 'Grind coffee to medium-fine and add to container.',
     timer: null
   },
@@ -62,7 +63,7 @@ recipe.addStep([
       { name: 'Water', amount: 90, unit: 'g' }
     ],
     description: 'Add water just off the boil and stir once and let bloom.',
-    timer: {name:'Bloom', time:{minute:0, second:15}, synced:true}
+    timer: { name: 'Bloom', time: { minute: 0, second: 15 }, synced: true }
   },
   {
     ingredient: [
@@ -74,12 +75,12 @@ recipe.addStep([
   {
     ingredient: null,
     description: 'Let the coffee brew.',
-    timer: {name:'Brew', time:{minute:1, second:0}, synced:true}
+    timer: { name: 'Brew', time: { minute: 1, second: 0 }, synced: true }
   },
   {
     ingredient: null,
     description: 'Flip container and press into cup.',
-    timer: {name:'Press', time:{minute:0, second:20}, synced:true}
+    timer: { name: 'Press', time: { minute: 0, second: 20 }, synced: true }
   }
 ])
 
@@ -88,19 +89,20 @@ export default function App(props) {
   return (
     <ScrollView contentContainerStyle={styles.container} indicatorStyle='black'>
       <StatusBar style='dark' />
-        {recipe.steps.map((step, index) => {
-          return (
-            <Step 
-              style={{
-                container:styles.step,
-                description:styles.description,
-                ingredients:styles.ingredients,
-                descing: styles.descing,
-                timer: styles.timer}} 
-                key={index} step={step}>
-            </Step>
+      <Register />
+      {/* {recipe.steps.map((step, index) => {
+        return (
+            // <Step 
+            //   style={{
+            //     container:styles.step,
+            //     description:styles.description,
+            //     ingredients:styles.ingredients,
+            //     descing: styles.descing,
+            //     timer: styles.timer}} 
+            //     key={index} step={step}>
+            // </Step>
           )
-        })}
+      })} */}
     </ScrollView>
   );
 }
