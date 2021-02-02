@@ -10,24 +10,42 @@ export default function Step(props) {
     const ref_nameBox = useRef()
     const ref_passBox = useRef()
 
+    function register() {
+        fetch('http://192.168.0.17:3000/register', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                name: name,
+                password: pass,
+            }),
+        })
+        .then(res => res.json())
+        .then(resj => console.log(resj))
+        .catch(err => console.log(err))
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.row}>
-                <Text style={styles.label}>{'Email'}</Text>
+                <Text style={styles.label}>{'Name'}</Text>
                 <TextInput
                     style={styles.input}
                     onChangeText={text => setName(text)}
-                    keyboardType={'email-address'}
+                    maxLength={32}
                     returnKeyType={'next'}
                     onSubmitEditing={() => { ref_nameBox.current.focus() }}
                 />
             </View>
             <View style={styles.row}>
-                <Text style={styles.label}>{'Name'}</Text>
+                <Text style={styles.label}>{'Email'}</Text>
                 <TextInput
                     style={styles.input}
                     onChangeText={text => setEmail(text)}
-                    maxLength={32}
+                    keyboardType={'email-address'}
                     returnKeyType={'next'}
                     ref={ref_nameBox}
                     onSubmitEditing={() => { ref_passBox.current.focus() }}
@@ -46,14 +64,14 @@ export default function Step(props) {
                 <Button
                     title='Login'
                     type='clear'
-                    containerStyle={{width: 60}}
+                    containerStyle={{ width: 60 }}
                     buttonStyle={styles.button}
                 />
                 <Button
                     title='Register'
-                    containerStyle={{width: 180}}
+                    containerStyle={{ width: 180 }}
                     buttonStyle={styles.button}
-                    onPress={()=>{ console.log(email, name, pass)}}
+                    onPress={register}
                 />
             </View>
         </View>
@@ -97,11 +115,11 @@ const styles = StyleSheet.create({
         borderWidth: .5
     },
     buttonRow: {
-        flexDirection:'row',
-        justifyContent:'space-between',
-        alignItems:'center',
-        alignSelf:'stretch',
-        marginTop:18
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        alignSelf: 'stretch',
+        marginTop: 18
     },
     button: {
         borderRadius: 40,
