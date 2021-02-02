@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Appearance, AppearanceProvider, useColorScheme } from 'react-native-appearance';
 import Step from './components/Step.js';
 import Register from './components/Register.js';
+import Login from './components/Login.js';
 import { ScrollView } from 'react-native';
 import styles from './styles.js'
 
@@ -89,7 +90,8 @@ export default function App(props) {
   return (
     <ScrollView contentContainerStyle={styles.container} indicatorStyle='black'>
       <StatusBar style='dark' />
-      <Register />
+      {/* <Register /> */}
+      <Login />
       {/* {recipe.steps.map((step, index) => {
         return (
             // <Step 
