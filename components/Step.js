@@ -1,12 +1,20 @@
 import React, { Component, useEffect } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, TextInput } from 'react-native'
 import { Card, ListItem, Image, Button, Icon } from 'react-native-elements'
 
 export default function Step(props) {
     return (
         <View style={props.style.container}>
             <View style={props.style.descing}>
-                <Text style={props.style.description}>{props.step.description}</Text>
+                {props.step.editable ? (
+                    <TextInput
+                        style={props.style.description}
+                        defaultValue={props.step.description}
+                        onEndEditing={(value) => {props.step.description=value}}
+                    />
+                ):(
+                    <Text style={props.style.description}>{props.step.description}</Text>
+                )}
                 {props.step.ingredient ?
                     (<View style={props.style.ingredients}>
                         {props.step.ingredient.map((ingredient, index) => {
