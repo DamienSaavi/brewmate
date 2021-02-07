@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TextInput } from 'react-native'
+import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-native'
 import { Card, ListItem, Image, Button, Icon } from 'react-native-elements'
 
 export default function Step(props) {
@@ -23,13 +23,15 @@ export default function Step(props) {
                 password: pass,
             }),
         })
-        .then(res => res.json())
-        .then(resj => console.log(resj))
-        .catch(err => console.log(err))
+            .then(res => res.json())
+            .then(resj => console.log(resj))
+            .catch(err => console.log(err))
     }
 
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "position" : "height"}
+            style={styles.container}>
             <View style={styles.row}>
                 <Text style={styles.label}>{'Name'}</Text>
                 <TextInput
@@ -74,7 +76,7 @@ export default function Step(props) {
                     onPress={register}
                 />
             </View>
-        </View>
+        </KeyboardAvoidingView>
     )
 }
 
@@ -87,7 +89,7 @@ const styles = StyleSheet.create({
         alignSelf: 'stretch',
         justifyContent: 'center',
         marginHorizontal: 20,
-        marginTop: 100,
+        marginTop: 0,
         padding: 20,
         shadowColor: 'black',
         shadowOffset: { width: 1, height: 3 },

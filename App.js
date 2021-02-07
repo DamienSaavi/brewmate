@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, KeyboardAvoidingView } from 'react-native';
 import Constants from 'expo-constants';
 import { Card, ListItem, Image, Button, Icon } from 'react-native-elements'
 import { LinearGradient } from 'expo-linear-gradient';
@@ -90,21 +90,26 @@ export default function App(props) {
   return (
     <ScrollView contentContainerStyle={styles.container} indicatorStyle='black'>
       <StatusBar style='dark' />
-      {/* <Register /> */}
-      <Login />
-      {/* {recipe.steps.map((step, index) => {
-        return (
-            // <Step 
-            //   style={{
-            //     container:styles.step,
-            //     description:styles.description,
-            //     ingredients:styles.ingredients,
-            //     descing: styles.descing,
-            //     timer: styles.timer}} 
-            //     key={index} step={step}>
-            // </Step>
+      {/* <Register />
+      <Login /> */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "position" : "height"}
+        style={{alignSelf:'stretch'}}>
+        {recipe.steps.map((step, index) => {
+          return (
+            <Step
+              style={{
+                container: styles.step,
+                description: styles.description,
+                ingredients: styles.ingredients,
+                descing: styles.descing,
+                timer: styles.timer
+              }}
+              key={index} step={step}>
+            </Step>
           )
-      })} */}
+        })}
+      </KeyboardAvoidingView>
     </ScrollView>
   );
 }
