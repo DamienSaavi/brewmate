@@ -65,9 +65,10 @@ export default function Step(props) {
             </View>
             <Button
                 title='Test'
-                containerStyle={{ width: 180 }}
+                containerStyle={{ width: 90 }}
                 buttonStyle={styles.button}
                 onPress={() => {
+                    console.log('yeet')
                     fetch('http://192.168.0.17:3000/user', {
                         method: 'GET',
                         headers: {

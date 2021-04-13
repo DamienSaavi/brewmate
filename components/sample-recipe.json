@@ -1,0 +1,87 @@
+{
+    "name": "Inverted Aeropress Cofee",
+    "description": "The 'ol faithful.",
+    "ingredients": null,
+    "steps": [
+        {
+            "ingredient": [
+                {
+                    "name": "Coffee",
+                    "amount": 17,
+                    "unit": "g"
+                },
+                {
+                    "name": "Water",
+                    "amount": 180,
+                    "unit": "g"
+                }
+            ],
+            "description": "Basic Aeropress coffee recipe using the inverted method.",
+            "timer": null
+        },
+        {
+            "ingredient": [
+                {
+                    "name": "Coffee",
+                    "amount": 17,
+                    "unit": "g"
+                }
+            ],
+            "description": "Grind coffee to medium-fine and add to container.",
+            "timer": null
+        },
+        {
+            "ingredient": [
+                {
+                    "name": "Water",
+                    "amount": 90,
+                    "unit": "g"
+                }
+            ],
+            "description": "Add water just off the boil and stir once and let bloom.",
+            "timer": {
+                "name": "Bloom",
+                "time": {
+                    "minute": 0,
+                    "second": 15
+                },
+                "synced": true
+            }
+        },
+        {
+            "ingredient": [
+                {
+                    "name": "Water",
+                    "amount": 90,
+                    "unit": "g"
+                }
+            ],
+            "description": "Add the remaining water and stir once.",
+            "timer": null
+        },
+        {
+            "ingredient": null,
+            "description": "Let the coffee brew.",
+            "timer": {
+                "name": "Brew",
+                "time": {
+                    "minute": 1,
+                    "second": 0
+                },
+                "synced": true
+            }
+        },
+        {
+            "ingredient": null,
+            "description": "Flip container and press into cup.",
+            "timer": {
+                "name": "Press",
+                "time": {
+                    "minute": 0,
+                    "second": 20
+                },
+                "synced": true
+            }
+        }
+    ]
+}

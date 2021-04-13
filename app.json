@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "BrewMate",
+    "name": "brewmate",
     "slug": "brewmate",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,13 +16,10 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "userInterfaceStyle": "dark",
     "ios": {
-      "supportsTablet": true,
-      "userInterfaceStyle": "dark"
+      "supportsTablet": true
     },
     "android": {
-      "userInterfaceStyle": "dark",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
@@ -30,8 +27,6 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "description": "",
-    "githubUrl": "https://github.com/DamienSaavi/brewmate"
+    }
   }
 }
