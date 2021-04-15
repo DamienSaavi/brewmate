@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { KeyboardAvoidingView } from 'react-native'
+import { View, ScrollView, KeyboardAvoidingView, StyleSheet } from 'react-native'
 import { Button } from 'react-native-elements'
 import Step from './Step'
 
-export default function Recipe(props) {
-    const [steps, setSteps] = useState(props.recipe.steps)
+export default function Recipe({ route }) {
+    const [steps, setSteps] = useState(route.params.recipe.steps)
 
     const addStep = (step) => {
         setSteps(steps.concat([step]))
@@ -14,21 +14,25 @@ export default function Recipe(props) {
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "position" : "height"}
             style={{ alignSelf: 'stretch' }}>
-            {steps.map((step, index) => {
-                return (
-                    <Step
-                        key={index} step={step}>
-                    </Step>
-                )
-            })}
+            <ScrollView style={{paddingBottom:100}}>
+                {steps.map((step, index) => {
+                    return (
+                        <Step
+                            key={index} step_no={index} step={step}>
+                        </Step>
+                    )
+                })}
+                <View style={{height:150}}></View>
+            </ScrollView>
             <Button
                 title='+'
-                containerStyle={{ width: 180 }}
-                buttonStyle={{ marginBottom: 80 }}
+                containerStyle={styles.add_container}
+                buttonStyle={styles.add_button}
+                titleStyle={{fontSize:36}}
                 onPress={() => addStep(
                     {
                         ingredient: null,
-                        description: 'Look at you! adding a new step and all :)',
+                        description: 'New step!',
                         timer: null
                     }
                 )}
@@ -36,3 +40,18 @@ export default function Recipe(props) {
         </KeyboardAvoidingView>
     )
 }
+
+const styles = StyleSheet.create({
+    add_container: {
+        position: 'absolute',
+        bottom: 36,
+        right: 36,
+        borderRadius: 40,
+        borderWidth: 1,
+        justifyContent:'center',
+    },
+    add_button: {
+        width: 70,
+        height: 70
+    }
+})

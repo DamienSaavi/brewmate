@@ -2,100 +2,95 @@ import React, { useState } from 'react'
 import { Text, View, StyleSheet } from 'react-native'
 import { Icon } from 'react-native-elements'
 
-export default function Step(props) {
+export default function Step({step, step_no}) {
     const [editable, setEditable] = useState(false)
-    const [description, setDescription] = useState(props.step.description)
-    const [ingredient, setIngredient] = useState(props.step.ingredient)
-    const [timer, setTimer] = useState(props.step.timer)
+    const [description, setDescription] = useState(step.description)
+    const [ingredient, setIngredient] = useState(step.ingredient)
+    const [timer, setTimer] = useState(step.timer)
 
     return (
-        <View
-            onLongPress={() => { setEditable(!editable) }}>
-            <View style={styles.container}>
-                <View style={styles.descing}>
-                    <Text style={styles.description}>{description}</Text>
-                    {ingredient ?
-                        (<View style={styles.ingredients}>
-                            {ingredient.map((ingredient, index) => {
-                                return (
-                                    <Text style={{ color: 'white', paddingHorizontal: 12 }} key={index}>{ingredient.name + '  ' + String(ingredient.amount) + ingredient.unit}</Text>
-                                )
-                            })}
-                        </View>) : (null)}
-                </View>
-                {timer ?
-                    <View style={styles.timer}>
-                        <Text>{timer.name}</Text>
-                        <Icon
-                            name='timer'
-                            type='Ionicons'
-                            color='#000'
-                        />
-                        <Text>{String(timer.time.minute).padStart(2, '0') + ':' + String(timer.time.second).padStart(2, '0')}</Text>
+        <View style={styles.step_container}>
+            <Text>{step_no + '.'}</Text>
+            <View style={styles.desc_container}>
+                <Text>{description}</Text>
+                {ingredient ?
+                    <View style={styles.ingr_container}>
+                        {ingredient.map((ingredient, index) => {
+                            return (
+                                <Text style={styles.ingr} key={index}>
+                                    {ingredient.name + '  ' + String(ingredient.amount) + ingredient.unit}
+                                </Text>
+                            )
+                        })}
                     </View> : null}
             </View>
+            {timer ?
+                <View style={styles.timer_container}>
+                    {/* <Text>{timer.name}</Text> */}
+                    <Icon
+                        name='timer'
+                        type='Ionicons'
+                        color='#fff'
+                    />
+                    <Text style={styles.timer}>
+                        {String(timer.time.minute).padStart(2, '0') + ':' + String(timer.time.second).padStart(2, '0')}
+                    </Text>
+                </View> : null}
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
+    step_container: {
         flexDirection: 'row',
         alignSelf: 'stretch',
+        flexGrow:0,
         justifyContent: 'space-between',
-        marginHorizontal: 20,
-        marginBottom: 0,
-        marginTop: 40,
-        borderRadius: 30,
-        padding: 10,
-        borderColor: '#000',
-        shadowColor: 'black',
-        shadowOffset: { width: 1, height: 3 },
-        shadowRadius: 5,
-        shadowOpacity: .2,
-        backgroundColor: 'white'
+        marginHorizontal: 16,
+        marginTop: 50,
     },
-    description_edit: {
-        flex: 1,
-        padding: 10,
-        borderWidth: .1,
-        borderRadius: 10,
-        overflow: 'hidden',
-        borderColor: '#000',
-        shadowColor: 'black',
-        shadowOffset: { width: 1, height: 3 },
-        shadowRadius: 3,
-        shadowOpacity: .2,
-        backgroundColor: 'transparent',
-        borderColor: 'white'
-    },
-    description: {
-        flex: 1,
-        padding: 10,
-    },
-    ingredients: {
+    ingr_container: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginHorizontal: 10,
-        borderRadius: 25,
+        marginLeft: 16,
+        bottom: -20,
+        position:'absolute'
+    },
+    ingr: {
+        color: 'white',
         justifyContent: 'center',
+        borderWidth: 0,
+        borderRadius: 17,
+        paddingHorizontal: 10,
+        paddingVertical: 7,
+        marginRight: 8,
+        backgroundColor: '#a15d0a',
+        overflow:'hidden'
+    },
+    desc_container: {
+        flex: 1,
+        position: 'relative',
+        alignItems: 'flex-start',
         padding: 15,
-        shadowColor: 'black',
-        shadowRadius: 5,
-        shadowOpacity: .3,
-        backgroundColor: '#855E42',
-        // top: 30,
-        shadowOffset: { width: 1, height: 3 },
+        backgroundColor: 'white',
+        borderRadius: 30,
+        borderWidth: 2,
+        borderColor: '#58a83d'
     },
-    descing: {
+    timer_container: {
         flex: 1,
-        alignItems: 'flex-start'
-    },
-    timer: {
-        flex: 1,
+        flexBasis: 60,
         alignItems: 'center',
         justifyContent: 'center',
-        maxWidth: 80,
-        minHeight: 80,
+        backgroundColor: '#1c7aad',
+        marginLeft: 16,
+        maxWidth: 60,
+        height: 80,
+        borderRadius: 30,
+        borderWidth: 2,
+        borderColor: '#154e6e'
+    },
+    timer: {
+        color: 'white'
     }
 });
