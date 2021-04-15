@@ -6,7 +6,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Recipes from './components/Recipes'
 import Step from './components/Step'
 import Recipe from './components/Recipe'
-import { } from 'react-native';
 
 const Stack = createStackNavigator();
 

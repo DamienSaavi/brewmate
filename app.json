@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "brewmate",
-    "slug": "brewmate",
+    "name": "chefmate",
+    "slug": "chefmate",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
