@@ -4,7 +4,6 @@ import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Recipes from './components/Recipes'
-import Step from './components/Step'
 import Recipe from './components/Recipe'
 
 const Stack = createStackNavigator();

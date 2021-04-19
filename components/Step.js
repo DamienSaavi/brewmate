@@ -1,15 +1,25 @@
-import React, { useState } from 'react'
-import { Text, View, StyleSheet } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Text, View, StyleSheet, Button, LayoutAnimation } from 'react-native'
 import { Icon } from 'react-native-elements'
 
-export default function Step({step, step_no}) {
-    const [editable, setEditable] = useState(false)
-    const [description, setDescription] = useState(step.description)
-    const [ingredient, setIngredient] = useState(step.ingredient)
-    const [timer, setTimer] = useState(step.timer)
+export default function Step({ step, step_no, editing, delStep}) {
+    const description = step.description
+    const ingredient = step.ingredient
+    const [editable, setEditable] = useState(editing)
+    const timer = step.timer
+
+    useEffect(() => {
+        setEditable(editing) 
+    }, [editing])
 
     return (
         <View style={styles.step_container}>
+            {editable ?
+                <Button
+                    onPress={() => {
+                        delStep(step_no)
+                    }}
+                    title="X" /> : null}
             <Text>{step_no + '.'}</Text>
             <View style={styles.desc_container}>
                 <Text>{description}</Text>
@@ -24,18 +34,29 @@ export default function Step({step, step_no}) {
                         })}
                     </View> : null}
             </View>
-            {timer ?
+            {editable && !timer ?
                 <View style={styles.timer_container}>
-                    {/* <Text>{timer.name}</Text> */}
                     <Icon
                         name='timer'
                         type='Ionicons'
                         color='#fff'
                     />
                     <Text style={styles.timer}>
-                        {String(timer.time.minute).padStart(2, '0') + ':' + String(timer.time.second).padStart(2, '0')}
+                        {'+'}
                     </Text>
-                </View> : null}
+                </View> :
+                timer ?
+                    <View style={styles.timer_container}>
+                        {/* <Text>{timer.name}</Text> */}
+                        <Icon
+                            name='timer'
+                            type='Ionicons'
+                            color='#fff'
+                        />
+                        <Text style={styles.timer}>
+                            {String(timer.time.minute).padStart(2, '0') + ':' + String(timer.time.second).padStart(2, '0')}
+                        </Text>
+                    </View> : null}
         </View>
     )
 }
@@ -44,7 +65,7 @@ const styles = StyleSheet.create({
     step_container: {
         flexDirection: 'row',
         alignSelf: 'stretch',
-        flexGrow:0,
+        flexGrow: 0,
         justifyContent: 'space-between',
         marginHorizontal: 16,
         marginTop: 50,
@@ -54,7 +75,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginLeft: 16,
         bottom: -20,
-        position:'absolute'
+        position: 'absolute'
     },
     ingr: {
         color: 'white',
@@ -65,7 +86,7 @@ const styles = StyleSheet.create({
         paddingVertical: 7,
         marginRight: 8,
         backgroundColor: '#a15d0a',
-        overflow:'hidden'
+        overflow: 'hidden'
     },
     desc_container: {
         flex: 1,

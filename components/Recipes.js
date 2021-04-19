@@ -6,20 +6,24 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Recipe from './Recipe'
 import { ScrollView } from 'react-native-gesture-handler';
 
+// used to reset local db
+const sample_recipes = require('./sample-recipe.json')
 
 export default function Recipes({ navigation }) {
-    const [recipes, updateRecipes] = useState([]);
+    const [recipes, setRecipes] = useState([]);
 
+    // sync shown recipes with local storage
     useEffect(() => {
         (async () => {
             const db = await AsyncStorage.getItem('@recipes')
             if (db) {
                 const db_init = JSON.parse(db)
-                updateRecipes(db_init.recipes)
+                setRecipes(db_init.recipes)
             }
         })()
     }, [])
 
+    // save to local storage everytime recipes change
     useEffect(() => {
         (async () => {
             const db = JSON.stringify({ recipes })
@@ -27,14 +31,22 @@ export default function Recipes({ navigation }) {
         })()
     }, [recipes])
 
-    const add_recipe = (i) => {
+    // add new recipe
+    const addRecipe = (i) => {
         const new_recipe = {
             name: 'new recipe ' + i,
             description: 'anoter one',
             ingredients: null,
             steps: []
         }
-        updateRecipes([...recipes, new_recipe])
+        setRecipes([...recipes, new_recipe])
+    }
+
+    // update recipe 
+    const updateRecipe = (recipe, i) => {
+        const updated = [...recipes]
+        updated[i] = recipe
+        setRecipes(updated)
     }
 
     return (
@@ -52,7 +64,9 @@ export default function Recipes({ navigation }) {
                             buttonStyle={{ width: 60, height:60 }}
                             onPress={() => {
                                 navigation.push('Recipe', {
-                                    recipe: recipes[index]
+                                    index: index,
+                                    recipe: recipes[index],
+                                    updateRecipe: updateRecipe
                                 })
                             }}
                         />
@@ -63,7 +77,7 @@ export default function Recipes({ navigation }) {
                 title='Recipe'
                 buttonStyle={{ width: 150, height: 150, alignSelf:'center' }}
                 onPress={() => {
-                    add_recipe(recipes.length)
+                    addRecipe(recipes.length)
                 }}
             />
         </ScrollView>
