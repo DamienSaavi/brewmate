@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, StyleSheet, Button, LayoutAnimation } from 'react-native'
-import { Icon } from 'react-native-elements'
+import { Text, View, StyleSheet, LayoutAnimation } from 'react-native'
+import { Icon, Button } from 'react-native-elements'
 
-export default function Step({ step, step_no, editing, delStep}) {
+export default function Step({ step, step_no, editing, delStep }) {
     const description = step.description
     const ingredient = step.ingredient
     const [editable, setEditable] = useState(editing)
     const timer = step.timer
 
     useEffect(() => {
-        setEditable(editing) 
+        setEditable(editing)
     }, [editing])
 
     return (
         <View style={styles.step_container}>
             {editable ?
                 <Button
+                    title="X" 
+                    type={'clear'}
+                    containerStyle={{ justifyContent:'center'}}
+                    titleStyle={{color:'red'}}
                     onPress={() => {
-                        delStep(step_no)
-                    }}
-                    title="X" /> : null}
+                        delStep()
+                    }}/> : null}
             <Text>{step_no + '.'}</Text>
             <View style={styles.desc_container}>
                 <Text>{description}</Text>

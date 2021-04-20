@@ -1,69 +1,77 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react'
-import { View, ScrollView, KeyboardAvoidingView, StyleSheet, TouchableOpacity, LayoutAnimation } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, LayoutAnimation, UIManager } from 'react-native'
 import { Button } from 'react-native-elements'
 import DraggableFlatList from 'react-native-draggable-flatlist'
 import Step from './Step'
 
+if (Platform.OS === 'android') {
+    if (UIManager.setLayoutAnimationEnabledExperimental) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }
 
-const layoutAnimConfig = {
-    duration: 300,
-    update: {
-        type: LayoutAnimation.Types.easeInEaseOut,
-    },
+// animation config to use on layout change
+const layoutAnimationConfig = {
+    duration: 500,
     create: {
-        type: LayoutAnimation.Types.easeInEaseOut,
+        type: 'spring',
+        property: 'scaleXY',
+        springDamping: 0.8
     },
+    duration: 500,
     delete: {
-        duration: 500,
-        type: LayoutAnimation.Types.easeInEaseOut,
-        property: LayoutAnimation.Properties.scaleX,
+        type: 'spring',
+        property: 'scaleXY',
+        springDamping: 0.5
     },
-};
-
+    update: {
+        type: 'spring',
+        springDamping: 0.5
+    }
+}
 
 export default function Recipe({ route, navigation }) {
-
-    // use recipe instead of steps. push changes to recipe instead of steps !!!!!!!!!!!!!!!
-
     const [recipe, setRecipe] = useState(route.params.recipe)
-    const [steps, setSteps] = useState(route.params.recipe.steps)
     const [editing, setEditing] = useState(false)
-    const localrecipe = { ...route.params.recipe }
 
     // update recipe everytime steps change
     useEffect(() => {
-        (async () => {
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-
-            const { index, recipe, updateRecipe } = route.params
-            recipe.steps = [...steps]
-            updateRecipe(recipe, index)
-        })()
-    }, [steps])
+        const { index, updateRecipe } = route.params
+        updateRecipe(recipe, index)
+    }, [recipe])
 
     // add step
     const addStep = (step) => {
-        setSteps(steps.concat([step]))
+        //on animation end update step ID to prevent duplicates bc of index !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        LayoutAnimation.configureNext(layoutAnimationConfig);
+        const updatedRecipe = Object.create(recipe)
+        updatedRecipe.steps = recipe.steps.concat(step)
+        setRecipe(updatedRecipe)
     }
 
     // delete step
-    const delStep = (index => {
-        const updated = steps.filter((item, i) => {
+    const delStep = (index) => {
+        //on animation end update step ID to prevent duplicates bc of index !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        LayoutAnimation.configureNext(layoutAnimationConfig);
+        const updatedRecipe = Object.create(recipe)
+        updatedRecipe.steps = recipe.steps.filter((item, i) => {
             return index != i
         })
-        setSteps(updated)
-    })
+        setRecipe(updatedRecipe)
+    }
 
-    // update local instance of recipe
-    const setStep = (index, step) => {
-        localrecipe.steps[index] = step
+    // update steps array
+    const updateSteps = (steps) => {
+        const updatedRecipe = Object.create(recipe)
+        updatedRecipe.steps = steps
+        setRecipe(updatedRecipe)
     }
 
     // show edit button in nav header
     navigation.setOptions({
         headerRight: () => (
             <Button onPress={() => {
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+                LayoutAnimation.configureNext(layoutAnimationConfig);
                 setEditing(!editing)
             }}
                 title="Edit" />
@@ -71,18 +79,17 @@ export default function Recipe({ route, navigation }) {
     })
 
     return (
-        <KeyboardAvoidingView style={{ flex: 1, paddingBottom: 100 }}>
+        <KeyboardAvoidingView style={{ flex: 1 }}>
             <DraggableFlatList
                 contentContainerStyle={{ paddingBottom: 150 }}
-                data={steps}
-                // extraData={steps}
-                keyExtractor={(item, index) => index.toString()}
-                onDragEnd={({ data }) => setSteps(data)}
+                data={recipe.steps}
+                keyExtractor={(item) => item.id.toString()}
+                onDragEnd={({ data }) => updateSteps(data)}
                 renderItem={({ item, index, drag, isActive }) =>
                     <TouchableOpacity
                         disabled={!editing}
                         onLongPress={drag}>
-                        <Step step_no={index} step={item} editing={editing} delStep={delStep} />
+                        <Step step={item} step_no={index} editing={editing} delStep={() => delStep(index)} />
                     </TouchableOpacity>
                 }
             />
@@ -93,8 +100,9 @@ export default function Recipe({ route, navigation }) {
                 titleStyle={{ fontSize: 36 }}
                 onPress={() => addStep(
                     {
+                        id: recipe.steps.length,
                         ingredient: null,
-                        description: 'Step #' + steps.length,
+                        description: 'Step #' + recipe.steps.length,
                         timer: null
                     }
                 )}

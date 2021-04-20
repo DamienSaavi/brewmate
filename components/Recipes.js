@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View } from 'react-native'
+import { Text, StyleSheet, KeyboardAvoidingView } from 'react-native'
 import { Card, Button } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,7 +18,7 @@ export default function Recipes({ navigation }) {
             const db = await AsyncStorage.getItem('@recipes')
             if (db) {
                 const db_init = JSON.parse(db)
-                setRecipes(db_init.recipes)
+                setRecipes(sample_recipes.recipes)
             }
         })()
     }, [])
@@ -50,36 +50,55 @@ export default function Recipes({ navigation }) {
     }
 
     return (
-        <ScrollView>
-            { recipes.map((recipe, index) => {
-                return (
-                    <Card key={index}>
-                        <Card.Title>{recipe.name}</Card.Title>
-                        <Card.Divider />
-                        <Text style={{ marginBottom: 10 }}>
-                            {recipe.description + index}
-                        </Text>
-                        <Button
-                            title='View'
-                            buttonStyle={{ width: 60, height:60 }}
-                            onPress={() => {
-                                navigation.push('Recipe', {
-                                    index: index,
-                                    recipe: recipes[index],
-                                    updateRecipe: updateRecipe
-                                })
-                            }}
-                        />
-                    </Card>
-                )
-            })}
+
+        <KeyboardAvoidingView style={{ flex: 1 }}>
+            <ScrollView contentContainerStyle={{paddingBottom:200}}>
+                {recipes.map((recipe, index) => {
+                    return (
+                        <Card key={index}>
+                            <Card.Title>{recipe.name}</Card.Title>
+                            <Card.Divider />
+                            <Text style={{ marginBottom: 10 }}>
+                                {recipe.description}
+                            </Text>
+                            <Button
+                                title='View'
+                                buttonStyle={{ width: 60, height: 60 }}
+                                onPress={() => {
+                                    navigation.push('Recipe', {
+                                        index: index,
+                                        recipe: recipes[index],
+                                        updateRecipe: updateRecipe
+                                    })
+                                }}
+                            />
+                        </Card>
+                    )
+                })}
+            </ScrollView>
             <Button
-                title='Recipe'
-                buttonStyle={{ width: 150, height: 150, alignSelf:'center' }}
-                onPress={() => {
-                    addRecipe(recipes.length)
-                }}
+                title='+'
+                containerStyle={styles.add_container}
+                buttonStyle={styles.add_button}
+                titleStyle={{ fontSize: 36 }}
+                onPress={() => addRecipe(recipes.length)}
             />
-        </ScrollView>
+        </KeyboardAvoidingView>
     )
 }
+
+
+const styles = StyleSheet.create({
+    add_container: {
+        position: 'absolute',
+        bottom: 64,
+        right: 16,
+        borderRadius: 40,
+        borderWidth: 1,
+        justifyContent: 'center',
+    },
+    add_button: {
+        width: 70,
+        height: 70
+    }
+})
