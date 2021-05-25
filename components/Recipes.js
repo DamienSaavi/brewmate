@@ -2,30 +2,47 @@ import React, { useState, useEffect } from 'react'
 import { Text, StyleSheet, KeyboardAvoidingView } from 'react-native'
 import { Card, Button } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native';
+import { HeaderBackButton } from '@react-navigation/stack'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Recipe from './Recipe'
 import { ScrollView } from 'react-native-gesture-handler';
 
 // used to reset local db
-const sample_recipes = require('./sample-recipe.json')
+const sample_recipes = require('./sample-recipe.json').recipes
+
 
 export default function Recipes({ navigation }) {
     const [recipes, setRecipes] = useState([]);
+    const [initialized, setInit] = useState(false)
 
     // sync shown recipes with local storage
     useEffect(() => {
         (async () => {
+
+            // initialize db for testing
+            const init = JSON.stringify({ recipes: sample_recipes })
+
+            // alert('INIT ' + init)
+            // await AsyncStorage.removeItem('@recipes')
+            // await AsyncStorage.setItem('@recipes', init)
+
             const db = await AsyncStorage.getItem('@recipes')
-            if (db) {
-                const db_init = JSON.parse(db)
-                setRecipes(sample_recipes.recipes)
-            }
+
+            const db_init = JSON.parse(db)
+
+            setRecipes(db_init.recipes)
+            // setRecipes(sample_recipes.recipes)
+
+            setInit(true)
         })()
     }, [])
 
     // save to local storage everytime recipes change
     useEffect(() => {
         (async () => {
+            if (!initialized)
+                return
+            
             const db = JSON.stringify({ recipes })
             await AsyncStorage.setItem('@recipes', db)
         })()
@@ -52,8 +69,8 @@ export default function Recipes({ navigation }) {
     return (
 
         <KeyboardAvoidingView style={{ flex: 1 }}>
-            <ScrollView contentContainerStyle={{paddingBottom:200}}>
-                {recipes.map((recipe, index) => {
+            <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
+                {recipes?.map((recipe, index) => {
                     return (
                         <Card key={index}>
                             <Card.Title>{recipe.name}</Card.Title>
@@ -65,7 +82,7 @@ export default function Recipes({ navigation }) {
                                 title='View'
                                 buttonStyle={{ width: 60, height: 60 }}
                                 onPress={() => {
-                                    navigation.push('Recipe', {
+                                    navigation.navigate('Recipe', {
                                         index: index,
                                         recipe: recipes[index],
                                         updateRecipe: updateRecipe

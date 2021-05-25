@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, LayoutAnimation, UIManager } from 'react-native'
+import { HeaderBackButton } from '@react-navigation/stack'
 import { Button } from 'react-native-elements'
 import DraggableFlatList from 'react-native-draggable-flatlist'
 import Step from './Step'
+import { Header } from 'react-native/Libraries/NewAppScreen'
+
 
 if (Platform.OS === 'android') {
     if (UIManager.setLayoutAnimationEnabledExperimental) {
-      UIManager.setLayoutAnimationEnabledExperimental(true);
+        UIManager.setLayoutAnimationEnabledExperimental(true);
     }
-  }
+}
 
 // animation config to use on layout change
 const layoutAnimationConfig = {
@@ -32,50 +35,86 @@ const layoutAnimationConfig = {
 
 export default function Recipe({ route, navigation }) {
     const [recipe, setRecipe] = useState(route.params.recipe)
+    const [nextID, setNextID] = useState([])
     const [editing, setEditing] = useState(false)
 
     // update recipe everytime steps change
-    useEffect(() => {
+    const saveChanges = () => {
         const { index, updateRecipe } = route.params
         updateRecipe(recipe, index)
-    }, [recipe])
+    }
 
     // add step
     const addStep = (step) => {
-        //on animation end update step ID to prevent duplicates bc of index !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         LayoutAnimation.configureNext(layoutAnimationConfig);
-        const updatedRecipe = Object.create(recipe)
+
+        if (nextID.length > 0) {
+            step.id = nextID[0]
+            setNextID(nextID.slice(1))
+        } else {
+            step.id = recipe.steps.length
+        }
+
+        const updatedRecipe = JSON.parse(JSON.stringify(recipe))
         updatedRecipe.steps = recipe.steps.concat(step)
+
         setRecipe(updatedRecipe)
     }
 
     // delete step
     const delStep = (index) => {
-        //on animation end update step ID to prevent duplicates bc of index !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         LayoutAnimation.configureNext(layoutAnimationConfig);
-        const updatedRecipe = Object.create(recipe)
+
+        const droppedID = recipe.steps[index].id
+
+        if (droppedID !== recipe.steps.length - 1 && !nextID.find(id => id == droppedID))
+            setNextID(nextID.concat(droppedID))
+
+        const updatedRecipe = JSON.parse(JSON.stringify(recipe))
         updatedRecipe.steps = recipe.steps.filter((item, i) => {
             return index != i
         })
+
         setRecipe(updatedRecipe)
     }
 
     // update steps array
-    const updateSteps = (steps) => {
-        const updatedRecipe = Object.create(recipe)
+    const updateStepsOrder = (steps) => {
+        const updatedRecipe = JSON.parse(JSON.stringify(recipe))
         updatedRecipe.steps = steps
         setRecipe(updatedRecipe)
     }
 
+
     // show edit button in nav header
     navigation.setOptions({
         headerRight: () => (
-            <Button onPress={() => {
-                LayoutAnimation.configureNext(layoutAnimationConfig);
-                setEditing(!editing)
-            }}
-                title="Edit" />
+            <Button
+                onPress={() => {
+                    LayoutAnimation.configureNext(layoutAnimationConfig);
+
+                    if (editing)
+                        saveChanges()
+
+                    setEditing(!editing)
+                }}
+                title={editing ? 'Save' : 'Edit'} />
         ),
+        headerLeft: (props) => (
+            <HeaderBackButton
+                // {...props}
+                onPress={() => {
+                    LayoutAnimation.configureNext(layoutAnimationConfig);
+                    if (editing) {
+                        setEditing(false)
+                        setRecipe(route.params.recipe)
+                        setNextID([])
+                    }
+                    else
+                        navigation.goBack()
+                }}
+                label={editing ? 'Cancel' : 'Recipes'} />
+        )
     })
 
     return (
@@ -84,7 +123,7 @@ export default function Recipe({ route, navigation }) {
                 contentContainerStyle={{ paddingBottom: 150 }}
                 data={recipe.steps}
                 keyExtractor={(item) => item.id.toString()}
-                onDragEnd={({ data }) => updateSteps(data)}
+                onDragEnd={({ data }) => updateStepsOrder(data)}
                 renderItem={({ item, index, drag, isActive }) =>
                     <TouchableOpacity
                         disabled={!editing}
@@ -94,13 +133,14 @@ export default function Recipe({ route, navigation }) {
                 }
             />
             <Button
+                disabled={!editing}
                 title='+'
                 containerStyle={styles.add_container}
                 buttonStyle={styles.add_button}
                 titleStyle={{ fontSize: 36 }}
                 onPress={() => addStep(
                     {
-                        id: recipe.steps.length,
+                        id: null,
                         ingredient: null,
                         description: 'Step #' + recipe.steps.length,
                         timer: null
