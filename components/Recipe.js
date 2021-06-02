@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, LayoutAnimation, UIManager } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, LayoutAnimation, UIManager, Text, View, ScrollView } from 'react-native'
+import { Button, Overlay, Input, Card } from 'react-native-elements'
 import { HeaderBackButton } from '@react-navigation/stack'
-import { Button } from 'react-native-elements'
 import DraggableFlatList from 'react-native-draggable-flatlist'
 import Step from './Step'
-import { Header } from 'react-native/Libraries/NewAppScreen'
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
 if (Platform.OS === 'android') {
@@ -19,13 +19,13 @@ const layoutAnimationConfig = {
     create: {
         type: 'spring',
         property: 'scaleXY',
-        springDamping: 0.8
+        springDamping: 0.5
     },
     duration: 500,
     delete: {
         type: 'spring',
         property: 'scaleXY',
-        springDamping: 0.5
+        springDamping: 1
     },
     update: {
         type: 'spring',
@@ -35,8 +35,14 @@ const layoutAnimationConfig = {
 
 export default function Recipe({ route, navigation }) {
     const [recipe, setRecipe] = useState(route.params.recipe)
+    const [recipeBackup, setRecipeBackup] = useState(route.params.recipe)
     const [nextID, setNextID] = useState([])
     const [editing, setEditing] = useState(false)
+    const [focusedStep, focusStep] = useState(false)
+
+    const [modDescription, setModDescription] = useState(null)
+    const [modIngredient, setModIngrediet] = useState(null)
+    const [modTimer, setModTimer] = useState(null)
 
     // update recipe everytime steps change
     const saveChanges = () => {
@@ -86,6 +92,13 @@ export default function Recipe({ route, navigation }) {
     }
 
 
+    const updateStep = (index, step) => {
+        const updatedRecipe = JSON.parse(JSON.stringify(recipe))
+        updatedRecipe.steps[index] = step
+
+        setRecipe(updatedRecipe)
+    }
+
     // show edit button in nav header
     navigation.setOptions({
         headerRight: () => (
@@ -96,18 +109,18 @@ export default function Recipe({ route, navigation }) {
                     if (editing)
                         saveChanges()
 
+                    setRecipeBackup(recipe)
                     setEditing(!editing)
                 }}
                 title={editing ? 'Save' : 'Edit'} />
         ),
-        headerLeft: (props) => (
+        headerLeft: () => (
             <HeaderBackButton
-                // {...props}
                 onPress={() => {
                     LayoutAnimation.configureNext(layoutAnimationConfig);
                     if (editing) {
                         setEditing(false)
-                        setRecipe(route.params.recipe)
+                        setRecipe(recipeBackup)
                         setNextID([])
                     }
                     else
@@ -122,31 +135,93 @@ export default function Recipe({ route, navigation }) {
             <DraggableFlatList
                 contentContainerStyle={{ paddingBottom: 150 }}
                 data={recipe.steps}
+                extraData={recipe}
                 keyExtractor={(item) => item.id.toString()}
                 onDragEnd={({ data }) => updateStepsOrder(data)}
                 renderItem={({ item, index, drag, isActive }) =>
                     <TouchableOpacity
                         disabled={!editing}
-                        onLongPress={drag}>
-                        <Step step={item} step_no={index} editing={editing} delStep={() => delStep(index)} />
+                        onLongPress={drag}
+                        onPress={() => {
+                            LayoutAnimation.configureNext(layoutAnimationConfig);
+                            focusStep(index)
+                        }} >
+                        <Step
+                            step={item}
+                            step_no={index}
+                            editing={editing}
+                            delStep={() => delStep(index)}
+                            drag={drag} />
                     </TouchableOpacity>
                 }
             />
-            <Button
-                disabled={!editing}
-                title='+'
-                containerStyle={styles.add_container}
-                buttonStyle={styles.add_button}
-                titleStyle={{ fontSize: 36 }}
-                onPress={() => addStep(
-                    {
-                        id: null,
-                        ingredient: null,
-                        description: 'Step #' + recipe.steps.length,
-                        timer: null
-                    }
-                )}
-            />
+            {editing ?
+                <Button
+                    title='+'
+                    containerStyle={styles.add_container}
+                    buttonStyle={styles.add_button}
+                    titleStyle={{ fontSize: 36 }}
+                    onPress={() => addStep(
+                        {
+                            id: null,
+                            ingredient: null,
+                            description: 'Step #' + recipe.steps.length,
+                            timer: null
+                        }
+                    )}
+                /> : null}
+            <Overlay
+                // animationType='fade'
+                isVisible={typeof focusedStep == 'number' && focusedStep >= 0}
+                onBackdropPress={() => {
+                    const step = JSON.parse(JSON.stringify(recipe.steps[focusedStep]))
+                    if (typeof modDescription == 'string' && modDescription !== null)
+                        step.description = modDescription
+                    updateStep(focusedStep,step)
+                    focusStep(false)
+                    setModDescription(null)
+                    
+                }}
+                overlayStyle={styles.overlay}
+                backdropStyle={styles.backdrop}
+                on
+            >
+                {(typeof focusedStep == 'number' && focusedStep >= 0) ?
+                    <ScrollView style={styles.overlayForm}>
+                        <Text>{'Description'}</Text>
+                        <Input
+                            defaultValue={recipe.steps[focusedStep].description}
+                            onChangeText={value => setModDescription(value)}
+                            multiline
+                        />
+                        <Text>{'Ingredient'}</Text>
+                        <View style={styles.ingr_container}>
+                            {recipe.steps[focusedStep].ingredient.map((ingredient, index) => {
+                                if (ingredient !== null)
+                                    return (
+                                        <View style={styles.ingr}>
+                                            <View style={styles.ingrName}>
+                                                <Text>{ingredient.name}</Text>
+                                            </View>
+                                            <View style={styles.ingrInfo}>
+                                                <Text>{String(ingredient.amount)}</Text>
+                                                <Text>{ingredient.unit}</Text>
+                                            </View>
+                                        </View>
+                                    )
+                            })}
+                            <View style={styles.ingr}>
+                                <View style={styles.ingrName}>
+                                    <Icon
+                                        name='add'
+                                        size={28}
+                                        color="#000"
+                                    />
+                                </View>
+                            </View>
+                        </View>
+                    </ScrollView> : null}
+            </Overlay>
         </KeyboardAvoidingView>
     )
 }
@@ -164,5 +239,44 @@ const styles = StyleSheet.create({
     add_button: {
         width: 70,
         height: 70
+    },
+    overlay: {
+        flex: 1,
+        padding: 20,
+        width: '85%',
+        marginTop: 128,
+        marginBottom: 100,
+
+    },
+    backdrop: {
+        
+    },
+    overlayForm: {
+        flex: 1,
+    },
+    ingr_container: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        marginTop: 12
+    },
+    ingr: {
+        borderRadius: 12,
+        paddingVertical: 12,
+        paddingHorizontal: 8,
+        marginHorizontal: 8,
+        backgroundColor: '#f99548',
+    },
+    ingrInfo: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    ingrName: {
+        flex: 1,
+        marginVertical: 0,
+        minHeight: 40,
+        maxWidth: 120,
+        minWidth: 48,
+        justifyContent:'center',
+        alignItems:'center',
     }
 })

@@ -3,7 +3,7 @@
         {
             "name": "Inverted Aeropress Cofee",
             "description": "The 'ol faithful.",
-            "ingredients": null,
+            "ingredients": [],
             "steps": [
                 {
                     "id":0,
@@ -67,7 +67,7 @@
                 },
                 {
                     "id":4,
-                    "ingredient": null,
+                    "ingredient": [],
                     "description": "Let the coffee brew.",
                     "timer": {
                         "name": "Brew",
@@ -80,7 +80,7 @@
                 },
                 {
                     "id":5,
-                    "ingredient": null,
+                    "ingredient": [],
                     "description": "Flip container and press into cup.",
                     "timer": {
                         "name": "Press",

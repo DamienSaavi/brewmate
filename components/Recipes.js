@@ -22,8 +22,7 @@ export default function Recipes({ navigation }) {
             // initialize db for testing
             const init = JSON.stringify({ recipes: sample_recipes })
 
-            // alert('INIT ' + init)
-            // await AsyncStorage.removeItem('@recipes')
+            // reset recipes
             // await AsyncStorage.setItem('@recipes', init)
 
             const db = await AsyncStorage.getItem('@recipes')
@@ -42,7 +41,7 @@ export default function Recipes({ navigation }) {
         (async () => {
             if (!initialized)
                 return
-            
+
             const db = JSON.stringify({ recipes })
             await AsyncStorage.setItem('@recipes', db)
         })()

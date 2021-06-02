@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, StyleSheet, LayoutAnimation } from 'react-native'
+import { Text, View, StyleSheet } from 'react-native'
 import { Icon, Button } from 'react-native-elements'
 
 export default function Step({ step, step_no, editing, delStep }) {
@@ -16,13 +16,13 @@ export default function Step({ step, step_no, editing, delStep }) {
         <View style={styles.step_container}>
             {editable ?
                 <Button
-                    title="X" 
+                    title="X"
                     type={'clear'}
-                    containerStyle={{ justifyContent:'center'}}
-                    titleStyle={{color:'red'}}
+                    containerStyle={{ justifyContent: 'center' }}
+                    titleStyle={{ color: 'red' }}
                     onPress={() => {
                         delStep()
-                    }}/> : null}
+                    }} /> : null}
             <Text>{step_no + '.'}</Text>
             <View style={styles.desc_container}>
                 <Text>{description}</Text>
@@ -37,7 +37,7 @@ export default function Step({ step, step_no, editing, delStep }) {
                         })}
                     </View> : null}
             </View>
-            {editable && !timer ?
+            { timer ?
                 <View style={styles.timer_container}>
                     <Icon
                         name='timer'
@@ -45,21 +45,9 @@ export default function Step({ step, step_no, editing, delStep }) {
                         color='#fff'
                     />
                     <Text style={styles.timer}>
-                        {'+'}
+                        {String(timer.time.minute).padStart(2, '0') + ':' + String(timer.time.second).padStart(2, '0')}
                     </Text>
-                </View> :
-                timer ?
-                    <View style={styles.timer_container}>
-                        {/* <Text>{timer.name}</Text> */}
-                        <Icon
-                            name='timer'
-                            type='Ionicons'
-                            color='#fff'
-                        />
-                        <Text style={styles.timer}>
-                            {String(timer.time.minute).padStart(2, '0') + ':' + String(timer.time.second).padStart(2, '0')}
-                        </Text>
-                    </View> : null}
+                </View> : null}
         </View>
     )
 }
