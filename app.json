@@ -28,7 +28,8 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "",
+    "primaryColor": "#79cb9c",
+    "description": "A simple no-nonsense recipe app for Android and iOS.",
     "githubUrl": "https://github.com/DamienSaavi/brewmate"
   }
 }
