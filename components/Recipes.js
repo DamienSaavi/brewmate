@@ -23,7 +23,7 @@ export default function Recipes({ navigation }) {
             const init = JSON.stringify({ recipes: sample_recipes })
 
             // reset recipes
-            // await AsyncStorage.setItem('@recipes', init)
+            await AsyncStorage.setItem('@recipes', init)
 
             const db = await AsyncStorage.getItem('@recipes')
 
