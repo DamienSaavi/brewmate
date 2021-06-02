@@ -8,7 +8,7 @@ A simple no-nonsense recipe app for Android and iOS.
 
 ### TODO
 - [ ] Finish recipe editing modal
-- [ ] Add user auth
+- [ ] Add user auth modules
   - [ ] Register
   - [ ] Login
   - [ ] Logout
