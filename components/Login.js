@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-native'
 import { Card, ListItem, Image, Button, Icon } from 'react-native-elements'
 
-export default function Step(props) {
+export default function Step({ navigation }) {
     const [email, setEmail] = useState('')
     const [pass, setPass] = useState('')
 
@@ -24,6 +24,16 @@ export default function Step(props) {
             .then(resj => console.log(resj))
             .catch(err => console.log(err))
     }
+
+    navigation.setOptions({
+        headerRight: () => (
+            <Button
+                onPress={() => {
+                    navigation.navigate('Register')
+                }}
+                title={'Regiter'} />
+        )
+    })
 
     return (
         <KeyboardAvoidingView
@@ -50,12 +60,6 @@ export default function Step(props) {
                     ref={ref_passBox}
                 /></View>
             <View style={styles.buttonRow}>
-                <Button
-                    title='Register'
-                    type='clear'
-                    containerStyle={{ width: 60 }}
-                    buttonStyle={styles.button}
-                />
                 <Button
                     title='Login'
                     containerStyle={{ width: 180 }}

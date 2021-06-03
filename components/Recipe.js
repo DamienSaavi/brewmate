@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, LayoutAnimation, UIManager, Text, View, ScrollView } from 'react-native'
-import { Button, Overlay, Input, Card } from 'react-native-elements'
+import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, LayoutAnimation, UIManager, Text, View, ScrollView, Pressable } from 'react-native'
+import { Button, Overlay, Input } from 'react-native-elements'
 import { HeaderBackButton } from '@react-navigation/stack'
 import DraggableFlatList from 'react-native-draggable-flatlist'
 import Step from './Step'
@@ -60,6 +60,8 @@ export default function Recipe({ route, navigation }) {
         } else {
             step.id = recipe.steps.length
         }
+
+        step.description = 'step ID #' + step.id
 
         const updatedRecipe = JSON.parse(JSON.stringify(recipe))
         updatedRecipe.steps = recipe.steps.concat(step)
@@ -133,7 +135,7 @@ export default function Recipe({ route, navigation }) {
     return (
         <KeyboardAvoidingView style={{ flex: 1 }}>
             <DraggableFlatList
-                contentContainerStyle={{ paddingBottom: 150 }}
+                // contentContainerStyle={{ paddingBottom: 150 }}
                 data={recipe.steps}
                 extraData={recipe}
                 keyExtractor={(item) => item.id.toString()}
@@ -164,8 +166,8 @@ export default function Recipe({ route, navigation }) {
                     onPress={() => addStep(
                         {
                             id: null,
-                            ingredient: null,
-                            description: 'Step #' + recipe.steps.length,
+                            ingredient: [],
+                            description: '',
                             timer: null
                         }
                     )}
@@ -184,7 +186,6 @@ export default function Recipe({ route, navigation }) {
                 }}
                 overlayStyle={styles.overlay}
                 backdropStyle={styles.backdrop}
-                on
             >
                 {(typeof focusedStep == 'number' && focusedStep >= 0) ?
                     <ScrollView style={styles.overlayForm}>
@@ -211,13 +212,18 @@ export default function Recipe({ route, navigation }) {
                                     )
                             })}
                             <View style={styles.ingr}>
-                                <View style={styles.ingrName}>
+                                <Pressable 
+                                onPress={() => {
+                                    // add ingredient to focused step
+                                    // show modal for ingredient editing
+                                }}
+                                style={styles.ingrName}>
                                     <Icon
                                         name='add'
                                         size={28}
                                         color="#000"
                                     />
-                                </View>
+                                </Pressable>
                             </View>
                         </View>
                     </ScrollView> : null}

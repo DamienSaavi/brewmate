@@ -65,6 +65,16 @@ export default function Recipes({ navigation }) {
         setRecipes(updated)
     }
 
+    navigation.setOptions({
+        headerRight: () => (
+            <Button
+                onPress={() => {
+                    navigation.navigate('Login')
+                }}
+                title={'Login'} />
+        )
+    })
+
     return (
 
         <KeyboardAvoidingView style={{ flex: 1 }}>
