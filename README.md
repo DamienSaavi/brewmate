@@ -17,3 +17,4 @@ For back-end, visit https://github.com/DamienSaavi/brewmate-server
   - [ ] Logout
 - [ ] Add recipe cloud sync
 - [ ] Examine security warnings
+- [ ] Fix the ugly
