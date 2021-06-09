@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, LayoutAnimation, UIManager, Text, View, ScrollView, Pressable } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, LayoutAnimation, UIManager, Text, View, ScrollView, TouchableHighlight } from 'react-native'
 import { Button, Overlay, Input } from 'react-native-elements'
 import { HeaderBackButton } from '@react-navigation/stack'
 import DraggableFlatList from 'react-native-draggable-flatlist'
@@ -39,7 +39,7 @@ export default function Recipe({ route, navigation }) {
     const [nextID, setNextID] = useState([])
     const [editing, setEditing] = useState(false)
     const [focusedStep, focusStep] = useState(false)
-
+    const [focusedIngr, focusIngr] = useState(false)
     const [modDescription, setModDescription] = useState(null)
     const [modIngredient, setModIngrediet] = useState(null)
     const [modTimer, setModTimer] = useState(null)
@@ -117,10 +117,10 @@ export default function Recipe({ route, navigation }) {
                 title={editing ? 'Save' : 'Edit'} />
         ),
         headerLeft: () => (
-            <HeaderBackButton
+            <Button
                 onPress={() => {
-                    LayoutAnimation.configureNext(layoutAnimationConfig);
                     if (editing) {
+                        LayoutAnimation.configureNext(layoutAnimationConfig);
                         setEditing(false)
                         setRecipe(recipeBackup)
                         setNextID([])
@@ -128,8 +128,10 @@ export default function Recipe({ route, navigation }) {
                     else
                         navigation.goBack()
                 }}
-                label={editing ? 'Cancel' : 'Recipes'} />
-        )
+                title={editing ? 'Cancel' : 'Recipes'}
+            />
+        ),
+
     })
 
     return (
@@ -176,13 +178,14 @@ export default function Recipe({ route, navigation }) {
                 // animationType='fade'
                 isVisible={typeof focusedStep == 'number' && focusedStep >= 0}
                 onBackdropPress={() => {
+                    focusIngr(false)
                     const step = JSON.parse(JSON.stringify(recipe.steps[focusedStep]))
                     if (typeof modDescription == 'string' && modDescription !== null)
                         step.description = modDescription
-                    updateStep(focusedStep,step)
+                    updateStep(focusedStep, step)
                     focusStep(false)
                     setModDescription(null)
-                    
+
                 }}
                 overlayStyle={styles.overlay}
                 backdropStyle={styles.backdrop}
@@ -200,34 +203,58 @@ export default function Recipe({ route, navigation }) {
                             {recipe.steps[focusedStep].ingredient.map((ingredient, index) => {
                                 if (ingredient !== null)
                                     return (
-                                        <View style={styles.ingr}>
-                                            <View style={styles.ingrName}>
-                                                <Text>{ingredient.name}</Text>
+                                        <TouchableHighlight
+                                            onPress={() => {
+                                                focusIngr(index)
+                                            }}>
+                                            <View style={styles.ingr}>
+                                                <View style={styles.ingrName}>
+                                                    <Text>{ingredient.name}</Text>
+                                                </View>
+                                                <View style={styles.ingrInfo}>
+                                                    <Text>{String(ingredient.amount)}</Text>
+                                                    <Text>{ingredient.unit}</Text>
+                                                </View>
                                             </View>
-                                            <View style={styles.ingrInfo}>
-                                                <Text>{String(ingredient.amount)}</Text>
-                                                <Text>{ingredient.unit}</Text>
-                                            </View>
-                                        </View>
+                                        </TouchableHighlight>
                                     )
                             })}
                             <View style={styles.ingr}>
-                                <Pressable 
-                                onPress={() => {
-                                    // add ingredient to focused step
-                                    // show modal for ingredient editing
-                                }}
-                                style={styles.ingrName}>
+                                <TouchableHighlight
+                                    onPress={() => {
+
+                                    }}
+                                    style={styles.ingrName}>
                                     <Icon
                                         name='add'
                                         size={28}
                                         color="#000"
                                     />
-                                </Pressable>
+                                </TouchableHighlight>
                             </View>
                         </View>
                     </ScrollView> : null}
+                <Overlay
+                    isVisible={typeof focusedIngr == 'number' && focusedIngr >= 0}
+                    onBackdropPress={() => {
+                        focusIngr(false)
+                    }}
+                    overlayStyle={styles.overlay}
+                    backdropStyle={styles.backdrop}>
+                    {(typeof focusedIngr == 'number' && focusedIngr >= 0) ?
+                        <View>
+                            <View>
+                                <Text>{recipe.steps[focusedStep].ingredient[focusedIngr].name}</Text>
+                            </View>
+                            <View>
+                                <Text>{String(recipe.steps[focusedStep].ingredient[focusedIngr].amount)}</Text>
+                                <Text>{recipe.steps[focusedStep].ingredient[focusedIngr].unit}</Text>
+                            </View>
+                        </View>
+                        : null}
+                </Overlay>
             </Overlay>
+
         </KeyboardAvoidingView>
     )
 }
@@ -255,7 +282,7 @@ const styles = StyleSheet.create({
 
     },
     backdrop: {
-        
+
     },
     overlayForm: {
         flex: 1,
@@ -282,7 +309,7 @@ const styles = StyleSheet.create({
         minHeight: 40,
         maxWidth: 120,
         minWidth: 48,
-        justifyContent:'center',
-        alignItems:'center',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 })

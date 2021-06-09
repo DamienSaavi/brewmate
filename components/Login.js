@@ -72,7 +72,6 @@ export default function Step({ navigation }) {
                 containerStyle={{ width: 90 }}
                 buttonStyle={styles.button}
                 onPress={() => {
-                    console.log('yeet')
                     fetch('http://192.168.0.17:3000/user', {
                         method: 'GET',
                         headers: {
@@ -81,8 +80,8 @@ export default function Step({ navigation }) {
                         },
                     })
                         .then(res => res.json())
-                        .then(resj => console.log(resj))
-                        .catch(err => console.log(err))
+                        .then(resj => alert(resj))
+                        .catch(err => alert(err))
                 }}
             />
         </KeyboardAvoidingView>
