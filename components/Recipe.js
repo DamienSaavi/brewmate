@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, LayoutAnimation, UIManager, Text, View, ScrollView, TouchableHighlight } from 'react-native'
 import { Button, Overlay, Input } from 'react-native-elements'
+import { Picker } from '@react-native-picker/picker';
+
 import { HeaderBackButton } from '@react-navigation/stack'
 import DraggableFlatList from 'react-native-draggable-flatlist'
 import Step from './Step'
 import Icon from 'react-native-vector-icons/Ionicons';
+import { TextInput } from 'react-native-gesture-handler';
 
 
 if (Platform.OS === 'android') {
@@ -206,6 +209,7 @@ export default function Recipe({ route, navigation }) {
                                         <TouchableHighlight
                                             onPress={() => {
                                                 focusIngr(index)
+                                                setModIngrediet(ingredient)
                                             }}>
                                             <View style={styles.ingr}>
                                                 <View style={styles.ingrName}>
@@ -237,18 +241,52 @@ export default function Recipe({ route, navigation }) {
                 <Overlay
                     isVisible={typeof focusedIngr == 'number' && focusedIngr >= 0}
                     onBackdropPress={() => {
+                        const step = JSON.parse(JSON.stringify(recipe.steps[focusedStep]))
+                        if (modIngredient !== null) {
+                            step.ingredient[focusedIngr] = modIngredient
+                            updateStep(focusedStep, step)
+                        }
                         focusIngr(false)
+                        setModIngrediet(null)
                     }}
                     overlayStyle={styles.overlay}
                     backdropStyle={styles.backdrop}>
                     {(typeof focusedIngr == 'number' && focusedIngr >= 0) ?
                         <View>
                             <View>
-                                <Text>{recipe.steps[focusedStep].ingredient[focusedIngr].name}</Text>
+                                <Input
+                                    defaultValue={modIngredient.name}
+                                    onChangeText={val => {
+                                        const ingr = JSON.parse(JSON.stringify(modIngredient))
+                                        ingr.name = val
+                                        setModIngrediet(ingr)
+                                    }}
+                                />
                             </View>
                             <View>
-                                <Text>{String(recipe.steps[focusedStep].ingredient[focusedIngr].amount)}</Text>
-                                <Text>{recipe.steps[focusedStep].ingredient[focusedIngr].unit}</Text>
+                                <Input
+                                    defaultValue={String(modIngredient.amount)}
+                                    onChangeText={val => {
+                                        const ingr = JSON.parse(JSON.stringify(modIngredient))
+                                        ingr.amount = Number(val)
+                                        setModIngrediet(ingr)
+                                    }}
+                                    keyboardType={'number-pad'}
+                                />
+                                <Picker
+                                    selectedValue={modIngredient.unit}
+                                    onValueChange={val => {
+                                        const ingr = JSON.parse(JSON.stringify(modIngredient))
+                                        ingr.unit = val
+                                        setModIngrediet(ingr)
+                                    }}>
+                                    <Picker.Item label='gr' value='gr' />
+                                    <Picker.Item label='oz' value='oz' />
+                                    <Picker.Item label='ml' value='ml' />
+                                    <Picker.Item label='tsp' value='tsp' />
+                                    <Picker.Item label='tbsp' value='tbsp' />
+                                    <Picker.Item label='cup' value='cup' />
+                                </Picker>
                             </View>
                         </View>
                         : null}
