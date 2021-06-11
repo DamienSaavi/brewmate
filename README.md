@@ -11,6 +11,9 @@ For back-end, visit https://github.com/DamienSaavi/brewmate-server
 
 ### TODO
 - [ ] Finish recipe editing UI
+  - [x] Description
+  - [x] Ingredient
+  - [ ] Timer
 - [ ] Add user auth modules
   - [x] Register
   - [x] Login
