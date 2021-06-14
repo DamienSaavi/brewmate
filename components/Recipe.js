@@ -178,7 +178,7 @@ export default function Recipe({ route, navigation }) {
                     )}
                 /> : null}
             <Overlay
-                // animationType='fade'
+                animationType='fade'
                 isVisible={typeof focusedStep == 'number' && focusedStep >= 0}
                 onBackdropPress={() => {
                     focusIngr(false)
@@ -194,7 +194,7 @@ export default function Recipe({ route, navigation }) {
                 backdropStyle={styles.backdrop}
             >
                 {(typeof focusedStep == 'number' && focusedStep >= 0) ?
-                    <ScrollView style={styles.overlayForm}>
+                    <View style={styles.overlayForm}>
                         <Text>{'Description'}</Text>
                         <Input
                             defaultValue={recipe.steps[focusedStep].description}
@@ -202,7 +202,7 @@ export default function Recipe({ route, navigation }) {
                             multiline
                         />
                         <Text>{'Ingredient'}</Text>
-                        <View style={styles.ingr_container}>
+                        <ScrollView horizontal style={styles.ingr_container}>
                             {recipe.steps[focusedStep].ingredient.map((ingredient, index) => {
                                 if (ingredient !== null)
                                     return (
@@ -210,8 +210,9 @@ export default function Recipe({ route, navigation }) {
                                             onPress={() => {
                                                 focusIngr(index)
                                                 setModIngrediet(ingredient)
-                                            }}>
-                                            <View style={styles.ingr}>
+                                            }}
+                                            style={styles.ingr}>
+                                            <View>
                                                 <View style={styles.ingrName}>
                                                     <Text>{ingredient.name}</Text>
                                                 </View>
@@ -223,21 +224,63 @@ export default function Recipe({ route, navigation }) {
                                         </TouchableHighlight>
                                     )
                             })}
-                            <View style={styles.ingr}>
-                                <TouchableHighlight
-                                    onPress={() => {
+                            <TouchableHighlight
+                                onPress={() => {
+                                    const updatedRecipe = JSON.parse(JSON.stringify(recipe))
 
-                                    }}
-                                    style={styles.ingrName}>
-                                    <Icon
-                                        name='add'
-                                        size={28}
-                                        color="#000"
-                                    />
-                                </TouchableHighlight>
-                            </View>
+                                    updatedRecipe.steps[focusedStep].ingredient = recipe.steps[focusedStep].ingredient.concat({
+                                        name: 'New',
+                                        amount: 0,
+                                        unit: 'gr'
+                                    })
+
+                                    LayoutAnimation.configureNext(layoutAnimationConfig);
+                                    setRecipe(updatedRecipe)
+                                    // focusIngr
+                                }}
+                                style={styles.ingrAdd}>
+                                <Icon
+                                    name='add'
+                                    size={28}
+                                    color="#000"
+                                />
+                            </TouchableHighlight>
+                        </ScrollView>
+
+                        <Text style={{ marginTop:28}}>{'Timer'}</Text>
+                        <View style={{ flex: 1, flexDirection: 'row' }}>
+                            <Picker
+                                style={{ flex: 1 }}
+                                selectedValue={''}
+                                onValueChange={val => {
+                                    // const timer = JSON.parse(JSON.stringify(modTimer))
+                                    // timer.time.second = Number(val)
+                                    // setModTimer(timer)
+                                }}>
+                                <Picker.Item label={String(0).padStart(2, '0')} value={String(0)} />
+                            </Picker>
+                            <Picker
+                                style={{ flex: 1 }}
+                                selectedValue={''}
+                                onValueChange={val => {
+                                    // const timer = JSON.parse(JSON.stringify(modTimer))
+                                    // timer.time.second = Number(val)
+                                    // setModTimer(timer)
+                                }}>
+                                <Picker.Item label={String(0).padStart(2, '0')} value={String(0)} />
+                            </Picker>
+                            <Picker
+                                style={{ flex: 1 }}
+                                selectedValue={''}
+                                onValueChange={val => {
+                                    // const timer = JSON.parse(JSON.stringify(modTimer))
+                                    // timer.time.second = Number(val)
+                                    // setModTimer(timer)
+                                }}>
+                                <Picker.Item label={String(0).padStart(2, '0')} value={String(0)} />
+                            </Picker>
                         </View>
-                    </ScrollView> : null}
+                    </View> : null}
                 <Overlay
                     isVisible={typeof focusedIngr == 'number' && focusedIngr >= 0}
                     onBackdropPress={() => {
@@ -288,6 +331,17 @@ export default function Recipe({ route, navigation }) {
                                     <Picker.Item label='cup' value='cup' />
                                 </Picker>
                             </View>
+                            <Button
+                                onPress={() => {
+                                    const updatedRecipe = JSON.parse(JSON.stringify(recipe))
+
+                                    updatedRecipe.steps[focusedStep].ingredient.splice(focusedIngr, 1)
+                                    focusIngr(false)
+                                    LayoutAnimation.configureNext(layoutAnimationConfig)
+                                    setRecipe(updatedRecipe)
+                                }}
+                                title='Delete'
+                            />
                         </View>
                         : null}
                 </Overlay>
@@ -323,12 +377,11 @@ const styles = StyleSheet.create({
 
     },
     overlayForm: {
-        flex: 1,
+        // flex: 1,
     },
     ingr_container: {
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        marginTop: 12
+        marginTop: 12,
+        alignSelf:'stretch'
     },
     ingr: {
         borderRadius: 12,
@@ -336,13 +389,21 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
         marginHorizontal: 8,
         backgroundColor: '#f99548',
+        alignSelf: 'center'
+    },
+    ingrAdd: {
+        borderRadius: 12,
+        paddingVertical: 12,
+        paddingHorizontal: 8,
+        marginHorizontal: 8,
+        borderWidth: 1,
+        alignSelf: 'center'
     },
     ingrInfo: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     ingrName: {
-        flex: 1,
         marginVertical: 0,
         minHeight: 40,
         maxWidth: 120,
