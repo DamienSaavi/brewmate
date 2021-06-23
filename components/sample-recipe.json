@@ -6,7 +6,7 @@
             "ingredients": [],
             "steps": [
                 {
-                    "id":0,
+                    "id": 0,
                     "ingredient": [
                         {
                             "name": "Coffee",
@@ -20,10 +20,13 @@
                         }
                     ],
                     "description": "Basic Aeropress coffee recipe using the inverted method.",
-                    "timer": null
+                    "timer": {
+                        "minute": 0,
+                        "second": 0
+                    }
                 },
                 {
-                    "id":1,
+                    "id": 1,
                     "ingredient": [
                         {
                             "name": "Coffee",
@@ -32,10 +35,13 @@
                         }
                     ],
                     "description": "Grind coffee to medium-fine and add to container.",
-                    "timer": null
+                    "timer": {
+                        "minute": 0,
+                        "second": 0
+                    }
                 },
                 {
-                    "id":2,
+                    "id": 2,
                     "ingredient": [
                         {
                             "name": "Water",
@@ -45,16 +51,12 @@
                     ],
                     "description": "Add water just off the boil and stir once and let bloom.",
                     "timer": {
-                        "name": "Bloom",
-                        "time": {
-                            "minute": 0,
-                            "second": 15
-                        },
-                        "synced": true
+                        "minute": 0,
+                        "second": 15
                     }
                 },
                 {
-                    "id":3,
+                    "id": 3,
                     "ingredient": [
                         {
                             "name": "Water",
@@ -63,32 +65,27 @@
                         }
                     ],
                     "description": "Add the remaining water and stir once.",
-                    "timer": null
-                },
-                {
-                    "id":4,
-                    "ingredient": [],
-                    "description": "Let the coffee brew.",
                     "timer": {
-                        "name": "Brew",
-                        "time": {
-                            "minute": 1,
-                            "second": 0
-                        },
-                        "synced": true
+                        "minute": 0,
+                        "second": 0
                     }
                 },
                 {
-                    "id":5,
+                    "id": 4,
+                    "ingredient": [],
+                    "description": "Let the coffee brew.",
+                    "timer": {
+                        "minute": 1,
+                        "second": 0
+                    }
+                },
+                {
+                    "id": 5,
                     "ingredient": [],
                     "description": "Flip container and press into cup.",
                     "timer": {
-                        "name": "Press",
-                        "time": {
-                            "minute": 0,
-                            "second": 20
-                        },
-                        "synced": true
+                        "minute": 0,
+                        "second": 20
                     }
                 }
             ]

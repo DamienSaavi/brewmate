@@ -37,7 +37,7 @@ export default function Step({ step, step_no, editing, delStep }) {
                         })}
                     </View> : null}
             </View>
-            { timer ?
+            { (timer.minute || timer.second) ?
                 <View style={styles.timer_container}>
                     <Icon
                         name='timer'
@@ -45,7 +45,7 @@ export default function Step({ step, step_no, editing, delStep }) {
                         color='#fff'
                     />
                     <Text style={styles.timer}>
-                        {String(timer.time.minute).padStart(2, '0') + ':' + String(timer.time.second).padStart(2, '0')}
+                        {String(timer.minute).padStart(2, '0') + ':' + String(timer.second).padStart(2, '0')}
                     </Text>
                 </View> : null}
         </View>
