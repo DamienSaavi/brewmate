@@ -45,7 +45,7 @@ export default function Recipe({ route, navigation }) {
     const [focusedIngr, focusIngr] = useState(false)
     const [modDescription, setModDescription] = useState(null)
     const [modIngredient, setModIngrediet] = useState(null)
-    const [modTimer, setModTimer] = useState(null)
+    const [modTimer, setModTimer] = useState({ minute: 0, second: 0 })
 
     // update recipe everytime steps change
     const saveChanges = () => {
@@ -137,6 +137,19 @@ export default function Recipe({ route, navigation }) {
 
     })
 
+    const Minutes = () => {
+        const mins = []
+        for (let i = 0; i <= 60; i++)
+            mins.push(<Picker.Item label={String(i).padStart(2, '0')} value={i} />)
+        return mins
+    }
+    const Seconds = () => {
+        const secs = []
+        for (let i = 0; i < 60; i++)
+            secs.push(<Picker.Item label={String(i).padStart(2, '0')} value={i} />)
+        return secs
+    }
+
     return (
         <KeyboardAvoidingView style={{ flex: 1 }}>
             <DraggableFlatList
@@ -151,6 +164,7 @@ export default function Recipe({ route, navigation }) {
                         onLongPress={drag}
                         onPress={() => {
                             LayoutAnimation.configureNext(layoutAnimationConfig);
+                            setModTimer(recipe.steps[index].timer)
                             focusStep(index)
                         }} >
                         <Step
@@ -181,13 +195,18 @@ export default function Recipe({ route, navigation }) {
                 animationType='fade'
                 isVisible={typeof focusedStep == 'number' && focusedStep >= 0}
                 onBackdropPress={() => {
-                    focusIngr(false)
+                    LayoutAnimation.configureNext(layoutAnimationConfig);
+
                     const step = JSON.parse(JSON.stringify(recipe.steps[focusedStep]))
                     if (typeof modDescription == 'string' && modDescription !== null)
                         step.description = modDescription
+
+                    step.timer = modTimer
+
                     updateStep(focusedStep, step)
                     focusStep(false)
                     setModDescription(null)
+                    setModTimer({ minute: 0, second: 0 })
 
                 }}
                 overlayStyle={styles.overlay}
@@ -247,38 +266,32 @@ export default function Recipe({ route, navigation }) {
                             </TouchableHighlight>
                         </ScrollView>
 
-                        <Text style={{ marginTop:28}}>{'Timer'}</Text>
-                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                            <Picker
-                                style={{ flex: 1 }}
-                                selectedValue={''}
-                                onValueChange={val => {
-                                    // const timer = JSON.parse(JSON.stringify(modTimer))
-                                    // timer.time.second = Number(val)
-                                    // setModTimer(timer)
-                                }}>
-                                <Picker.Item label={String(0).padStart(2, '0')} value={String(0)} />
-                            </Picker>
-                            <Picker
-                                style={{ flex: 1 }}
-                                selectedValue={''}
-                                onValueChange={val => {
-                                    // const timer = JSON.parse(JSON.stringify(modTimer))
-                                    // timer.time.second = Number(val)
-                                    // setModTimer(timer)
-                                }}>
-                                <Picker.Item label={String(0).padStart(2, '0')} value={String(0)} />
-                            </Picker>
-                            <Picker
-                                style={{ flex: 1 }}
-                                selectedValue={''}
-                                onValueChange={val => {
-                                    // const timer = JSON.parse(JSON.stringify(modTimer))
-                                    // timer.time.second = Number(val)
-                                    // setModTimer(timer)
-                                }}>
-                                <Picker.Item label={String(0).padStart(2, '0')} value={String(0)} />
-                            </Picker>
+                        <Text style={{ marginTop: 28 }}>{'Timer'}</Text>
+                        <View style={{ display: 'flex', flexDirection: 'row', marginTop:16 }}>
+                            <View
+                                style={{ flex: 1, flexDirection: 'row', alignItems:'center'}}>
+                                <Text> {'Minutes:'}</Text>
+                                <Picker
+                                    style={{ width: 64 }}
+                                    selectedValue={modTimer.minute}
+                                    onValueChange={val => {
+                                        setModTimer({ minute: val, second: modTimer.second })
+                                    }}>
+                                    {Minutes()}
+                                </Picker>
+                            </View>
+                            <View
+                                style={{ flex: 1, flexDirection: 'row', alignItems:'center' }}>
+                                <Text> {'Seconds:'}</Text>
+                                <Picker
+                                    style={{ width: 64 }}
+                                    selectedValue={modTimer.second}
+                                    onValueChange={val => {
+                                        setModTimer({ minute: modTimer.minute, second: val })
+                                    }}>
+                                    {Seconds()}
+                                </Picker>
+                            </View>
                         </View>
                     </View> : null}
                 <Overlay
@@ -381,7 +394,7 @@ const styles = StyleSheet.create({
     },
     ingr_container: {
         marginTop: 12,
-        alignSelf:'stretch'
+        alignSelf: 'stretch'
     },
     ingr: {
         borderRadius: 12,
