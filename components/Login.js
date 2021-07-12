@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-native'
 import { Card, ListItem, Image, Button, Icon } from 'react-native-elements'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Step({ navigation }) {
     const [email, setEmail] = useState('')
@@ -12,7 +13,7 @@ export default function Step({ navigation }) {
         fetch('http://192.168.0.17:3000/login', {
             method: 'POST',
             headers: {
-                Accept: 'application/json',
+                'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -21,8 +22,13 @@ export default function Step({ navigation }) {
             }),
         })
             .then(res => res.json())
-            .then(resj => console.log(resj))
-            .catch(err => console.log(err))
+            .then(async (resJSON) => {
+                alert(resJSON.success ? 'successfully logged in' : 'login failed')
+                await AsyncStorage.setItem('@JWT', resJSON.token)
+                await AsyncStorage.setItem('@USERNAME', resJSON.username)
+                navigation.navigate('Recipes')
+            })
+            .catch(err => alert(err))
     }
 
     navigation.setOptions({
@@ -71,16 +77,17 @@ export default function Step({ navigation }) {
                 title='Test'
                 containerStyle={{ width: 90 }}
                 buttonStyle={styles.button}
-                onPress={() => {
+                onPress={async () => {
                     fetch('http://192.168.0.17:3000/user', {
                         method: 'GET',
                         headers: {
-                            Accept: 'application/json',
+                            'Accept': 'application/json',
                             'Content-Type': 'application/json',
+                            'Authorization': await AsyncStorage.getItem('@JWT')
                         },
                     })
                         .then(res => res.json())
-                        .then(resj => alert(resj))
+                        .then(resj => alert(JSON.stringify(resj)))
                         .catch(err => alert(err))
                 }}
             />

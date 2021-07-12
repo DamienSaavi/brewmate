@@ -14,6 +14,7 @@ const sample_recipes = require('./sample-recipe.json').recipes
 export default function Recipes({ navigation }) {
     const [recipes, setRecipes] = useState([]);
     const [initialized, setInit] = useState(false)
+    const [username, setUsername] = useState(null)
 
     // sync shown recipes with local storage
     useEffect(() => {
@@ -33,6 +34,8 @@ export default function Recipes({ navigation }) {
             // setRecipes(sample_recipes.recipes)
 
             setInit(true)
+            const uname = await AsyncStorage.getItem('@USERNAME')
+            setUsername(uname)
         })()
     }, [])
 
@@ -46,6 +49,13 @@ export default function Recipes({ navigation }) {
             await AsyncStorage.setItem('@recipes', db)
         })()
     }, [recipes])
+
+    const logout = async () => {
+        alert('logging out')
+        await AsyncStorage.setItem('@JWT', '')
+        await AsyncStorage.setItem('@USERNAME', '')
+        setUsername(null)
+    }
 
     // add new recipe
     const addRecipe = (i) => {
@@ -69,9 +79,22 @@ export default function Recipes({ navigation }) {
         headerRight: () => (
             <Button
                 onPress={() => {
+                    username ? (
+                        logout()
+                    ) : (
+                        navigation.navigate('Login')
+                    )
+                }}
+                title={username ? 'Logout' : 'Login'} />
+        ),
+        headerLeft: () => (
+            <Button
+                disabled={username === null}
+                
+                onPress={() => {
                     navigation.navigate('Login')
                 }}
-                title={'Login'} />
+                title={username ? username : 'user'} />
         )
     })
 
